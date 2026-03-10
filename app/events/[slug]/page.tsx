@@ -6,6 +6,7 @@ import BookEvent from "@/components/BookEvent";
 import { getSimilarEventsBySlug } from "@/lib/action/event.action";
 import { IEvent } from "@/database/event.model";
 import EventCard from "@/components/EventCard";
+import { cacheLife } from "next/cache";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -43,9 +44,37 @@ const EventTags = ({ tags }: { tags: string[] }) => {
 }
 
 const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  'use cache';
+  cacheLife('hours');
   const { slug } = await params;
-  const request = await fetch(`${BASE_URL}/api/events/${slug}`);
-  const { event: { title, description, image, overview, date, time, location, mode, agenda, audience, tags, organizer} } = await request.json();
+
+  let event;
+
+  try {
+    const request = await fetch(`${BASE_URL}/api/events/${slug}`, {
+      next: { revalidate: 60 }
+    });
+
+    if (!request.ok) {
+      if (request.status === 404) {
+        return notFound();
+      }
+      throw new Error(`Failed to fetch event details: ${request.statusText}`);
+    }
+
+    const response = await request.json();
+    event = response.event;
+
+    if (!event) {
+      return notFound();
+    }
+  } catch (error) { 
+    console.error('Error fetching event: ', error);
+    return notFound();
+  }
+  
+
+  const { title, description, image, overview, date, time, location, mode, agenda, audience, tags, organizer}  = event;
 
   if (!description) return notFound();
 
@@ -106,7 +135,7 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
               </p>
             )}
 
-            <BookEvent />
+            <BookEvent eventId={event._id.toString()} slug={event.slug} />
           </div>
         </aside>
       </div>
@@ -115,7 +144,7 @@ const EventDetailsPage = async ({ params }: { params: Promise<{ slug: string }> 
         <h2>Similar Events</h2>
         <div className="events">
           {similarEvents.length > 0 && similarEvents.map((similarEvent: IEvent) => (
-            <EventCard key={similarEvent.title} {...similarEvent}  />
+             <EventCard key={similarEvent.title} {...JSON.parse(JSON.stringify(similarEvent))} />
           ))}
         </div>
       </div>
