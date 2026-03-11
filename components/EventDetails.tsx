@@ -41,16 +41,16 @@ const EventTags = ({ tags }: { tags: string[] }) => {
   )
 }
 
-const EventDetails = async ({ params }: { params: Promise<string> }) => {
-  'use cache';
-  cacheLife('hours');
-  const slug = await params;
+const EventDetails = async ({ slug }: { slug: string }) => {
+//   'use cache';
+//   cacheLife('hours');
+//   const slug = await params;
 
     let event;
 
   try {
     const request = await fetch(`${BASE_URL}/api/events/${slug}`, {
-      next: { revalidate: 60 }
+      next: { revalidate: 3600 }
     });
 
     if (!request.ok) {
