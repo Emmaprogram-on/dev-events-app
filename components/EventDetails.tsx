@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import BookEvent from "@/components/BookEvent";
-import { getSimilarEventsBySlug } from "@/lib/action/event.action";
+import { getSimilarEventsBySlug, getEventBySlug } from "@/lib/action/event.action";
 import { IEvent } from "@/database/event.model";
 import EventCard from "@/components/EventCard";
 import { cacheLife } from "next/cache";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const EventDetailItem = ({ icon, alt, label }: { icon: string, alt: string, label: string }) => { 
   return (
@@ -48,29 +48,35 @@ const EventDetails = async ({ slug }: { slug: string }) => {
 
     let event;
 
+  // try {
+  //   const request = await fetch(`${BASE_URL}/api/events/${slug}`, {
+  //     next: { revalidate: 3600 }
+  //   });
+
+  //   if (!request.ok) {
+  //     if (request.status === 404) {
+  //       return notFound();
+  //     }
+  //     throw new Error(`Failed to fetch event details: ${request.statusText}`);
+  //   }
+
+  //   const response = await request.json();
+  //   event = response.event;
+
+  //   if (!event) {
+  //     return notFound();
+  //   }
+  // } catch (error) { 
+  //   console.error('Error fetching event: ', error);
+  //   return notFound();
+  // }
   try {
-    const request = await fetch(`${BASE_URL}/api/events/${slug}`, {
-      next: { revalidate: 3600 }
-    });
-
-    if (!request.ok) {
-      if (request.status === 404) {
-        return notFound();
-      }
-      throw new Error(`Failed to fetch event details: ${request.statusText}`);
-    }
-
-    const response = await request.json();
-    event = response.event;
-
-    if (!event) {
-      return notFound();
-    }
-  } catch (error) { 
-    console.error('Error fetching event: ', error);
-    return notFound();
-  }
-  
+  event = await getEventBySlug(slug);
+  if (!event) return notFound();
+} catch (error) {
+  console.error(error);
+  return notFound();
+}
 
   const { title, description, image, overview, date, time, location, mode, agenda, audience, tags, organizer}  = event;
 
