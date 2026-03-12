@@ -7,8 +7,8 @@ import { getAllEvents } from "@/lib/action/event.action";
 // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 const page = async () => {
-  'use cache';
-  cacheLife('hours')
+  // 'use cache';
+  // cacheLife('hours')
 const events = await getAllEvents();
 
   return (
