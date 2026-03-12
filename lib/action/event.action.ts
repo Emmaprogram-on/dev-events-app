@@ -25,3 +25,8 @@ export const getEventBySlug = async (slug: string) => {
   await connectToDatabase();
   return await Event.findOne({ slug }).lean();
 }
+
+export const getAllEvents = async () => {
+  await connectToDatabase();
+  return await Event.find().lean();
+}
