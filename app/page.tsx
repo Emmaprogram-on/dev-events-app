@@ -1,7 +1,7 @@
 import EventCard from "@/components/EventCard";
 import ExploreBtn from "@/components/ExploreBtn";
 import { IEvent } from "@/database/event.model";
-import { cacheLife } from "next/cache";
+// import { cacheLife } from "next/cache";
 import { getAllEvents } from "@/lib/action/event.action";
 
 // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -22,12 +22,14 @@ const events = await getAllEvents();
         <h3>Featured Events</h3>
 
         <ul className="events">
-          {events && events.length > 0 && events.map((event: IEvent) => (
+          {events && events.length > 0 && events.slice(0, 3).map((event: IEvent) => (
             <li key={event.title} className="list-none">
               <EventCard {...event} />
           </li>))}
         </ul>
       </div>
+
+      
       </section>
   );
 };
