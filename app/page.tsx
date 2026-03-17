@@ -29,7 +29,9 @@ const events = await getAllEvents();
         </ul>
       </div>
 
-      
+      <div className="mt-20 space-y-7">
+            <h3>Events We Think You will Like</h3>
+      </div>
       </section>
   );
 };
