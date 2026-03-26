@@ -31,7 +31,7 @@ export default function RootLayout({
       >
 
         <Navbar />
-<div className="absolute inset-0 top-0 z-[-1] min-h-screen">
+<div className="fixed inset-0 top-0 z-[-1]">
   <LightRays
     raysOrigin="top-center"
     raysColor="#5dfeca"

@@ -90,7 +90,8 @@ const page = async () => {
       <ExploreBtn />
 
 <div className="categories-section">
-  <h3>Browse by Category</h3>
+    <h3>Browse by Category</h3>
+           
     <div className="categories-grid">
       {categories.map((category) => (
       <Link
@@ -111,8 +112,8 @@ const page = async () => {
         <ul className="events">
           {events && events.length > 0 && events.slice(0, 3).map((event: IEvent) => (
             <li key={event.title} className="list-none">
-              <EventCard {...event} />
-          </li>))}
+              <EventCard {...JSON.parse(JSON.stringify(event))} />
+            </li>))}
         </ul>
       </div>
       

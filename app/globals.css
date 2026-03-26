@@ -149,7 +149,7 @@
 
 
 .search-bar-wrapper {
-  @apply relative w-[320px] max-sm:w-[140px];
+  @apply relative w-[320px] max-sm:w-[220px];
 }
 
 .search-input-container {
