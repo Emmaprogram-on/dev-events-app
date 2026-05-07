@@ -26,7 +26,11 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
 
   if (!cache.promise) {
     // Buffering is disabled so failed connections surface quickly.
-    const options: mongoose.ConnectOptions = { bufferCommands: false };
+    const options: mongoose.ConnectOptions = {
+    bufferCommands: false,
+    tls: true,
+    tlsAllowInvalidCertificates: true,
+  };
     cache.promise = mongoose.connect(MONGODB_URI as string, options);
   }
 

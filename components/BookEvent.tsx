@@ -2,8 +2,23 @@
 import { createBooking } from "@/lib/action/booking.action";
 import posthog from "posthog-js";
 import { useState } from "react";
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Field, FieldGroup } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
-const BookEvent = ({eventId, slug}: {eventId: string, slug: string}) => {
+
+const BookEvent = ({eventId, slug, title}: {eventId: string, slug: string, title: string}) => {
     const [email, setEmail] = useState('');
     const [submitted, setSubmitted] = useState(false);
 
@@ -21,26 +36,40 @@ const BookEvent = ({eventId, slug}: {eventId: string, slug: string}) => {
         }
     }
   return (
-     <div id="book-event">
-          {submitted ? (
-              <p className="text-sm text-green-200">Thank you for signing up!</p>
-          ) : (
-                  <form onSubmit={handleSubmit}>
-                     <div>
-                      <label htmlFor="email">Email Address</label>
-                      <input type="email" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} 
-                      id="email" 
-                      placeholder="Enter your email address" />
-                      </div> 
-                      
-                      <button type="submit" className="button-submit">Submit</button>
-                  </form>
-                 
-
-                  
-       )}   
+      <div id="book-event">
+          
+          <Dialog>
+      <form>
+        <DialogTrigger asChild>
+          <Button className="button-submit" >Get Tickets</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>
+              Make changes to your profile here. Click save when you&apos;re
+              done.
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <Label htmlFor="name-1">Name</Label>
+              <Input id="name-1" name="name" placeholder="enter your name" />
+            </Field>
+            <Field>
+              <Label htmlFor="username-1">Username</Label>
+              <Input id="username-1" name="username" placeholder="enter your username" />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            {/* <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose> */}
+            <Button type="submit">Checkout</Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+          </Dialog>
      </div>
   )
 }

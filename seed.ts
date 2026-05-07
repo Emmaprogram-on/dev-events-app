@@ -7,12 +7,14 @@ import { faker } from "@faker-js/faker";
 import * as https from "https";
 import * as http from "http";
 
+import { Ticket } from "@/database/ticket.model";
+
 // ─── Config ────────────────────────────────────────────────────────────────
 // Copy your .env.local values here temporarily to run the script,
 // or use dotenv: npm install dotenv and uncomment the line below
 // import * as dotenv from "dotenv"; dotenv.config({ path: ".env.local" });
 
-const MONGODB_URI = process.env.MONGODB_URI || "YOUR_MONGODB_URI_HERE";
+let MONGODB_URI = process.env.MONGODB_URI || "YOUR_MONGODB_URI_HERE";
 
 // Parse CLOUDINARY_URL manually
 const cloudinaryUrl = new URL(process.env.CLOUDINARY_URL!);
@@ -164,7 +166,12 @@ function generateTitle(topic: string, type: string, year: number): string {
 // ─── Main Seed Function ───────────────────────────────────────────────────────
 async function seed() {
   console.log("🌱 Connecting to MongoDB...");
-  await mongoose.connect(MONGODB_URI);
+  await mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 30000,
+    socketTimeoutMS: 45000,
+    tls: true,
+    tlsAllowInvalidCertificates: true,
+  });
   console.log("Connected!\n");
 
   const EVENTS_TO_CREATE = 10;
@@ -210,7 +217,26 @@ async function seed() {
     try {
       const event = new Event(eventData);
       await event.save();
-      console.log(`Saved to MongoDB with slug: ${event.slug}\n`);
+      console.log(`Saved to MongoDB with slug: ${event.slug}`);
+
+      // 5. Create tickets for the event
+      console.log(`  🎫 Creating tickets...`);
+      const tiers = [
+        { tierName: "Free", price: 0, totalSlots: 100 },
+        { tierName: "Early Bird", price: 25, totalSlots: 50 },
+        { tierName: "Standard", price: 50, totalSlots: 100 },
+        { tierName: "VIP", price: 100, totalSlots: 25 },
+      ];
+      await Ticket.insertMany(
+        tiers.map((tier) => ({
+          eventId: event._id,
+          tierName: tier.tierName,
+          price: tier.price,
+          totalSlots: tier.totalSlots,
+          slotsRemaining: tier.totalSlots,
+        }))
+      );
+      console.log(`  Created ${tiers.length} ticket tiers\n`);
     } catch (e: any) {
       // Skip duplicate slugs gracefully
       if (e.code === 11000) {

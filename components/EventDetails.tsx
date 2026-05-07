@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import BookEvent from "@/components/BookEvent";
+import TicketSelection from "@/components/TicketSelection";
 import { getEventBySlug, getSimilarEventsBySlug } from "@/lib/action/event.action";
+import { getTicketsByEventId } from "@/lib/action/ticket.action";
 import { IEvent } from "@/database/event.model";
 import EventCard from "@/components/EventCard";
 
@@ -60,11 +61,12 @@ const EventDetails = async ({ slug }: { slug: string }) => {
     return notFound();
   }
 
+  if (!event.description) return notFound();
+
+  const _id = event._id.toString();
   const { title, description, image, overview, date, time, location, agenda, audience, tags, organizer } = event;
 
-  if (!description) return notFound();
-
-  const booking = 10;
+  const tickets = await getTicketsByEventId(_id);
 
   return (
     <section id="event">
@@ -104,23 +106,18 @@ const EventDetails = async ({ slug }: { slug: string }) => {
 
         <aside className="booking">
           <div className="signup-card">
-            <h2>Book Your Spot</h2>
-            {booking > 0 ? (
-              <p className="text-sm">
-                Join {booking} others who have booked for their spot for this event!
-              </p>
-            ) : (
-              <p className="text-sm">
-                Be the first to book your spot!
-              </p>
-            )}
-            <BookEvent eventId={event._id.toString()} slug={event.slug} />
+            <h2>Reserve Your Spot</h2>
+            <TicketSelection
+              eventId={_id}
+              eventTitle={title}
+              tickets={tickets}
+            />
           </div>
         </aside>
       </div>
 
-      <div className="flex w-full flex-col gap-4 pt-20">
-        <h2>Similar Events</h2>
+      <div className="flex w-full flex-col gap-4 pt-40">
+        <h2>You might also like...</h2>
         <Suspense fallback={<div>Loading similar events...</div>}>
           <SimilarEvents slug={slug} />
         </Suspense>
