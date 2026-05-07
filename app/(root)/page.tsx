@@ -21,10 +21,10 @@ const StatsBar = () => {
           <span className="text-primary underline decoration-primary">Attend.</span>
         </h2>
         <p className="stats-description">
-          DevEvents is your go-to hub for discovering the best developer events 
+          CoddeConf is your go-to hub for discovering the best developer events 
   happening around the world. Whether you are looking for a hackathon to 
   sharpen your skills, a conference to expand your network, or a local 
-  meetup to connect with like-minded developers — we've got you covered. 
+  meetup to connect with like-minded developers — we&apos;ve got you covered. 
   Browse events, secure your spot in seconds, and never miss what matters 
   in the dev world again.
         </p>
@@ -89,7 +89,20 @@ const page = async () => {
 
       <ExploreBtn />
 
-<div className="categories-section">
+
+
+      <div className="mt-20 space-y-7">
+        <h3>Featured Events</h3>
+
+        <ul className="events">
+          {events && events.length > 0 && events.slice(0, 3).map((event: IEvent) => (
+            <li key={event.title} className="list-none">
+              <EventCard {...JSON.parse(JSON.stringify(event))} />
+            </li>))}
+        </ul>
+      </div>
+
+      <div className="categories-section">
     <h3>Browse by Category</h3>
            
     <div className="categories-grid">
@@ -105,17 +118,6 @@ const page = async () => {
     ))}
   </div>
 </div>
-
-      <div className="mt-20 space-y-7">
-        <h3>Featured Events</h3>
-
-        <ul className="events">
-          {events && events.length > 0 && events.slice(0, 3).map((event: IEvent) => (
-            <li key={event.title} className="list-none">
-              <EventCard {...JSON.parse(JSON.stringify(event))} />
-            </li>))}
-        </ul>
-      </div>
       
       <StatsBar />
       </section>
