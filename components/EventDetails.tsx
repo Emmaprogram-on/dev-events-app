@@ -87,7 +87,7 @@ const EventDetails = async ({ slug }: { slug: string }) => {
           <section className="flex-col-gap-2">
             <h2>Event Details</h2>
             <EventDetailItem icon="/icons/calendar.svg" alt="calendar"
-              label={new Date(date).toISOString().split('T')[0]}
+              label={new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
             />
             <EventDetailItem icon="/icons/clock.svg" alt="clock" label={time} />
             <EventDetailItem icon="/icons/pin.svg" alt="location" label={location} />
